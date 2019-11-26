@@ -1,5 +1,5 @@
 const member = async (ctx) => {
-  const userdb = await ctx.db.userdbP
+  const userdb = ctx.db.userdb
   const cursor = userdb.find({})
   let msg = '目前工作组内成员有：\n'
   while (await cursor.hasNext()) {
@@ -29,8 +29,16 @@ const member = async (ctx) => {
 const status = async (ctx) => {
   ctx.bot('send_group_msg', {
     group_id: ctx.group_id,
-    message: '跟踪对象当前未直播。'
+    message: '跟踪对象当前' + global.anneko.live ? '正在' : '未' + '直播。'
   })
 }
 
-module.exports = { member, status }
+const help = async (ctx) => {
+  ctx.bot('send_group_msg', {
+    group_id: ctx.group_id,
+    message:
+      '永远喵——任务分配系统v0.1，请勿调戏。\n命令请加“永远喵，”。\n状态：查看跟踪对象直播状态。\n成员：查看工作组成员。\n开启提醒：对于录播、轴和录入人员，在跟踪对象开播时收到@提醒。提醒默认关闭。\n关闭提醒：关闭上述提醒。'
+  })
+}
+
+module.exports = { member, status, help }

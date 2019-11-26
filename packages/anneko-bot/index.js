@@ -1,13 +1,21 @@
 const { CQWebSocket } = require('cq-websocket')
-const db = require('./utils/db')
+const { KeepLiveTCP } = require('bilibili-live-ws')
 
 const statfunc = require('./modules/stat')
+
+const groups = [951669054, 950620854]
+
+global.anneko = {
+  live: false
+}
 
 process.on('uncaughtException', (err) => {
   console.log('ERR unc expt')
   console.log(err)
 })
-;(() => {
+;(async () => {
+  const db = await require('./utils/db')()
+
   const bot = new CQWebSocket({
     baseUrl: process.env.WS_BASE
   })
@@ -42,6 +50,30 @@ process.on('uncaughtException', (err) => {
       case '状态':
         await statfunc.status(ctx)
         break
+      case '帮助':
+        await statfunc.help(ctx)
+        break
+    }
+  })
+
+  const live = new KeepLiveTCP(21701071)
+  live.on('LIVE', async () => {
+    global.anneko.live = true
+    for (const group_id of groups) {
+      bot('send_group_msg', {
+        group_id,
+        message: '跟踪对象开始直播。正在准备任务分配。'
+      })
+    }
+    // const userdb = db.userdb
+  })
+  live.on('PREPARING', () => {
+    global.anneko.live = false
+    for (const group_id of groups) {
+      bot('send_group_msg', {
+        group_id,
+        message: '跟踪对象停止了直播。剪辑请等待录播筛流。'
+      })
     }
   })
 })()

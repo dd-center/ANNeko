@@ -25,4 +25,13 @@ const otherprojdbP = connect.then(() =>
 //   (e, s) => {}
 // )
 
-module.exports = { statdbP, userdbP, trprojdbP, otherprojdbP }
+// module.exports = { statdbP, userdbP, trprojdbP, otherprojdbP }
+
+module.exports = async () => {
+  return {
+    statdb: await statdbP,
+    userdb: await userdbP,
+    trprojdb: await trprojdbP,
+    otherprojdb: await otherprojdbP
+  }
+}
