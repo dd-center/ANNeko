@@ -22,6 +22,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     camelcase: 0,
-    'no-console': 0
+    'no-console': 0,
+    'require-await': 0
   }
 }
