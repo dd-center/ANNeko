@@ -13,10 +13,10 @@ const connect = client.connect().catch((err) => {
 
 const statdbP = connect.then(() => client.db('anneko').collection('stat'))
 const userdbP = connect.then(() => client.db('anneko').collection('user'))
-const trprojdbP = connect.then(() => client.db('anneko').collection('trproj'))
-const otherprojdbP = connect.then(() =>
-  client.db('anneko').collection('otherproj')
-)
+const projdbP = connect.then(() => client.db('anneko').collection('proj'))
+// const otherprojdbP = connect.then(() =>
+//   client.db('anneko').collection('otherproj')
+// )
 
 // userdbP.createIndex(
 //   {
@@ -31,7 +31,7 @@ module.exports = async () => {
   return {
     statdb: await statdbP,
     userdb: await userdbP,
-    trprojdb: await trprojdbP,
-    otherprojdb: await otherprojdbP
+    projdb: await projdbP
+    // otherprojdb: await otherprojdbP
   }
 }

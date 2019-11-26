@@ -1,7 +1,11 @@
+const { CQAt } = require('cq-websocket')
+const { getCurrent } = require('../utils/token')
+const { refreshAuth } = require('../utils/userAuth')
+
 const member = async (ctx) => {
   const userdb = ctx.db.userdb
   const cursor = userdb.find({})
-  let msg = '目前工作组内成员有：\n'
+  let msg = '目前工作组内成员有（进组请先看群公告）：\n'
   while (await cursor.hasNext()) {
     const d = await cursor.next()
     msg += d.displayName + '：'
@@ -27,13 +31,25 @@ const member = async (ctx) => {
 }
 
 const status = async (ctx) => {
+  if (ctx.stat < 1) {
+    ban(ctx)
+    return
+  }
+  const current = await getCurrent(ctx)
   ctx.bot('send_group_msg', {
     group_id: ctx.group_id,
-    message: '跟踪对象当前' + global.anneko.live ? '正在' : '未' + '直播。'
+    message:
+      '欢迎回来。\n跟踪对象当前' +
+      (global.anneko.live ? '正在' : '未') +
+      `直播。\n正在进行的项目个数：${current.processingCount}；历史总项目个数：${current.projCount}`
   })
 }
 
 const help = async (ctx) => {
+  if (ctx.stat < 1) {
+    ban(ctx)
+    return
+  }
   ctx.bot('send_group_msg', {
     group_id: ctx.group_id,
     message:
@@ -41,4 +57,27 @@ const help = async (ctx) => {
   })
 }
 
-module.exports = { member, status, help }
+const refresh = async (ctx) => {
+  if (ctx.stat < 250) {
+    ban(ctx)
+    return
+  }
+  ctx.bot('send_group_msg', {
+    group_id: ctx.group_id,
+    message: '维护任务开始。'
+  })
+  await refreshAuth(ctx)
+  ctx.bot('send_group_msg', {
+    group_id: ctx.group_id,
+    message: '维护完毕。'
+  })
+}
+
+const ban = (ctx) => {
+  ctx.bot('send_group_msg', {
+    group_id: ctx.group_id,
+    message: [new CQAt(Number(ctx.user_id)), '您的权限不足。']
+  })
+}
+
+module.exports = { member, status, help, refresh, ban }
