@@ -12,7 +12,7 @@ const getNew = async (ctx) => {
     { _id: 'projCount' },
     { $set: { data: Number(current + 1) } }
   )
-  return current + 1
+  return Number(Number(current) + 1)
 }
 
 const getCurrent = async (ctx) => {

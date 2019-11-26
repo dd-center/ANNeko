@@ -1,10 +1,13 @@
-const { CQWebSocket, CQAt } = require('cq-websocket')
+const { CQWebSocket } = require('cq-websocket')
 const { KeepLiveTCP } = require('bilibili-live-ws')
-const { refreshAuth } = require('../utils/userAuth')
+const { refreshAuth } = require('./utils/userAuth')
 
-const statfunc = require('./modules/stat')
+const statFunc = require('./modules/stat')
+const projFunc = require('./modules/proj')
+const userConfFunc = require('./modules/userConf')
 
 const groups = [951669054, 950620854]
+const livets = 0
 
 global.anneko = {
   live: false,
@@ -50,17 +53,64 @@ process.on('uncaughtException', (err) => {
         : 0
     }
     switch (cmd) {
+      case '自动立项':
+        await projFunc.newProj({
+          ...ctx,
+          ctxmsg: [
+            '直播',
+            new Date(livets)
+              .toLocaleString('zh-cn', { timeZone: 'Asia/Shanghai' })
+              .replace(/ /g, '-') + '时的直播'
+          ]
+        })
+        break
+      case '立项':
+        await projFunc.newProj(ctx)
+        break
+      case '签出':
+        await projFunc.checkout(ctx)
+        break
+      case '加入':
+        await projFunc.jumpIn(ctx)
+        break
+      case '退出':
+        await projFunc.jumpOut(ctx)
+        break
+      case '标记':
+        await projFunc.tag(ctx)
+        break
+      case '项目状态':
+        await projFunc.status(ctx)
+        break
+      case '视频源':
+        await projFunc.trans(ctx)
+        break
+      case '开启提醒':
+        await userConfFunc.enableNotify(ctx)
+        break
+      case '关闭提醒':
+        await userConfFunc.disableNotify(ctx)
+        break
       case '成员':
-        await statfunc.member(ctx)
+        await statFunc.member(ctx)
         break
       case '状态':
-        await statfunc.status(ctx)
+        await statFunc.status(ctx)
         break
       case '帮助':
-        await statfunc.help(ctx)
+        await statFunc.help(ctx)
         break
       case '维护':
-        await statfunc.refresh(ctx)
+        await statFunc.refresh(ctx)
+        break
+      case 'DEBUG':
+        await statFunc.debug(ctx)
+        break
+      default:
+        bot('send_group_msg', {
+          group_id,
+          message: '无效指令。'
+        })
         break
     }
   })
@@ -68,31 +118,41 @@ process.on('uncaughtException', (err) => {
   const live = new KeepLiveTCP(21701071)
   live.on('LIVE', async () => {
     global.anneko.live = true
+    const ts = new Date().getTime()
     for (const group_id of groups) {
       bot('send_group_msg', {
         group_id,
-        message: '跟踪对象开始直播。正在准备任务分配。'
+        message: `跟踪对象${new Date(ts).toLocaleString('zh-cn', {
+          timeZone: 'Asia/Shanghai'
+        })}开始了直播。正在准备任务分配。\n使用“永远喵，自动立项”以自动开始本次直播的立项。`
       })
     }
     const userdb = db.userdb
     const userFinded = await userdb.find({ notice: 1 }).toArray()
-    const uList = []
+    let message = ''
     for (const item of userFinded) {
       if (
         Number(item.record) === 1 ||
         Number(item.timing) === 1 ||
         Number(item.typing) === 1
       )
-        uList.push(new CQAt(Number(item._id)))
+        message += `[CQ:at,qq=${item._id}]`
     }
-    uList.push('\n上述有时间的组员请各就各位。')
+    message += '\n上述有时间的组员请各就各位。'
+    for (const group_id of groups) {
+      bot('send_group_msg', {
+        group_id,
+        message
+      })
+    }
   })
   live.on('PREPARING', () => {
     global.anneko.live = false
     for (const group_id of groups) {
       bot('send_group_msg', {
         group_id,
-        message: '跟踪对象停止了直播。剪辑请等待录播筛流。'
+        message:
+          '跟踪对象停止了直播。剪辑请等待录播筛流。\n使用“永远喵，自动立项”以自动开始本次直播的立项。'
       })
     }
   })
