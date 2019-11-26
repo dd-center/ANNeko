@@ -1,6 +1,22 @@
 const { getCurrent } = require('../utils/token')
 const { refreshAuth } = require('../utils/userAuth')
 
+const jobTable = {
+  typing: '录入',
+  record: '录播',
+  timing: '时轴',
+  support: '技术支持',
+  translation: '翻译',
+  clip: '剪辑',
+  video: '视频',
+  upload: '压制',
+  mixing: '混音',
+  music: '编曲',
+  art: '画师/美工',
+  program: '程序',
+  data: '数据'
+}
+
 const member = async (ctx) => {
   if (!global.anneko.uList) {
     ctx.bot('send_group_msg', {
@@ -12,19 +28,10 @@ const member = async (ctx) => {
   let msg = '目前工作组内成员有（进组请先看群公告）：\n'
   for (const d of global.anneko.uList) {
     msg += d.displayName + '：'
-    if (Number(d.typing) === 1) msg += '录入 '
-    if (Number(d.record) === 1) msg += '录播 '
-    if (Number(d.timing) === 1) msg += '时轴 '
-    if (Number(d.support) === 1) msg += '技术支持 '
-    if (Number(d.translation) === 1) msg += '翻译 '
-    if (Number(d.clip) === 1) msg += '剪辑 '
-    if (Number(d.video) === 1) msg += '视频 '
-    if (Number(d.upload) === 1) msg += '压制 '
-    if (Number(d.mixing) === 1) msg += '混音 '
-    if (Number(d.music) === 1) msg += '编曲 '
-    if (Number(d.art) === 1) msg += '画师/美工 '
-    if (Number(d.program) === 1) msg += '程序 '
-    if (Number(d.data) === 1) msg += '数据 '
+    msg += Object.entries(jobTable)
+      .map(([key, name]) => Number(d[key]) === 1 || name)
+      .filter(Boolean)
+      .join(' ')
     msg += '\n'
   }
   ctx.bot('send_group_msg', {
