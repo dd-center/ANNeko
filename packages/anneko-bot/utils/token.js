@@ -6,7 +6,7 @@ const getNew = async (ctx) => {
           _id: 'projCount'
         })
         .toArray()
-    ).data
+    )[0].data
   )
   await ctx.db.statdb.updateOne(
     { _id: 'projCount' },
@@ -24,7 +24,7 @@ const getCurrent = async (ctx) => {
             _id: 'projCount'
           })
           .toArray()
-      ).data
+      )[0].data
     ),
     processingCount: Number(
       (await ctx.db.projdb.find({ stat: 1 }).toArray()).length

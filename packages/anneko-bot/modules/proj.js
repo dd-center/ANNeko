@@ -48,7 +48,7 @@ const newProj = async (ctx) => {
     type: projType,
     createTime: projCreateDate,
     stat: 1,
-    step: '',
+    step: '待签出',
     worker: '',
     transId: ''
   })

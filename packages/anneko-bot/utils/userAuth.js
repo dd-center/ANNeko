@@ -12,8 +12,10 @@ const refreshAuth = async (ctx) => {
 
 const getUserName = (id) => {
   if (!global.anneko.uList) return ''
-  return global.anneko.uList.find((i) => Number(i._id) === Number(id))
-    .displayName
+  return (
+    global.anneko.uList.find((i) => Number(i._id) === Number(id)).displayName ||
+    ''
+  )
 }
 
 module.exports = { refreshAuth, getUserName }
