@@ -124,7 +124,8 @@ process.on('uncaughtException', (err) => {
         group_id,
         message: `跟踪对象${new Date(ts).toLocaleString('zh-cn', {
           timeZone: 'Asia/Shanghai'
-        })}开始了直播。正在准备任务分配。\n使用“永远喵，自动立项”以自动开始本次直播的立项。`
+        })}开始了直播。正在准备任务分配。
+使用“永远喵，自动立项”以自动开始本次直播的立项。`
       })
     }
     const userdb = db.userdb
@@ -151,8 +152,8 @@ process.on('uncaughtException', (err) => {
     for (const group_id of groups) {
       bot('send_group_msg', {
         group_id,
-        message:
-          '跟踪对象停止了直播。剪辑请等待录播筛流。\n使用“永远喵，自动立项”以自动开始本次直播的立项。'
+        message: `跟踪对象停止了直播。剪辑请等待录播筛流。
+          使用“永远喵，自动立项”以自动开始本次直播的立项。`
       })
     }
   })

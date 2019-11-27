@@ -11,8 +11,8 @@ const newProj = async (ctx) => {
   if (ctx.ctxmsg.length !== 2) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message:
-        '参数错误。\n“立项”命令接受两个参数，分别是“项目类别”和“项目名称”。'
+      message: `参数错误。
+“立项”命令接受两个参数，分别是“项目类别”和“项目名称”。`
     })
     return
   }
@@ -30,8 +30,8 @@ const newProj = async (ctx) => {
     default:
       ctx.bot('send_group_msg', {
         group_id: ctx.group_id,
-        message:
-          '参数错误。\n“项目名称”参数接受的值是“直播”、“剪辑”和“单品”的枚举。'
+        message: `参数错误。
+“项目名称”参数接受的值是“直播”、“剪辑”和“单品”的枚举。`
       })
       return
   }
@@ -54,11 +54,14 @@ const newProj = async (ctx) => {
   })
   ctx.bot('send_group_msg', {
     group_id: ctx.group_id,
-    message: `项目建立成功。\n项目编号：${projId}\n项目名称：${projName}\n项目类型：${
-      ctx.ctxmsg[0]
-    }\n创建时间：${new Date(projCreateDate).toLocaleString('zh-cn', {
+    message: `项目建立成功。
+项目编号：${projId}
+项目名称：${projName}
+项目类型：${ctx.ctxmsg[0]}
+创建时间：${new Date(projCreateDate).toLocaleString('zh-cn', {
       timeZone: 'Asia/Shanghai'
-    })}\n请组长签出工作进度。`
+    })}
+请组长签出工作进度。`
   })
 }
 
@@ -70,8 +73,8 @@ const checkout = async (ctx) => {
   if (ctx.ctxmsg.length !== 2) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message:
-        '参数错误。\n“签出”命令接受两个参数，分别是“项目编号”和“签出进度”。'
+      message: `参数错误。
+“签出”命令接受两个参数，分别是“项目编号”和“签出进度”。`
     })
     return
   }
@@ -113,7 +116,8 @@ const jumpIn = async (ctx) => {
   if (ctx.ctxmsg.length !== 1) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message: '参数错误。\n“加入”命令接受一个参数：“项目编号”。'
+      message: `参数错误。
+“加入”命令接受一个参数：“项目编号”。`
     })
     return
   }
@@ -164,7 +168,8 @@ const jumpOut = async (ctx) => {
   if (ctx.ctxmsg.length !== 1) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message: '参数错误。\n“退出”命令接受一个参数：“项目编号”。'
+      message: `参数错误。
+“退出”命令接受一个参数：“项目编号”。`
     })
     return
   }
@@ -217,7 +222,8 @@ const status = async (ctx) => {
   if (ctx.ctxmsg.length !== 1) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message: '参数错误。\n“项目状态”命令接受一个参数：“项目编号”。'
+      message: `参数错误。
+“项目状态”命令接受一个参数：“项目编号”。`
     })
     return
   }
@@ -259,7 +265,12 @@ const status = async (ctx) => {
 
   ctx.bot('send_group_msg', {
     group_id: ctx.group_id,
-    message: `项目${projId}的状态：\n名称：${data[0].name}\n创建时间：${data[0].createTime}\n状态：${stat}\n进度：${data[0].step}\n工作人员：${str}。`
+    message: `项目${projId}的状态：
+名称：${data[0].name}
+创建时间：${data[0].createTime}
+状态：${stat}
+进度：${data[0].step}
+工作人员：${str}。`
   })
 }
 
@@ -271,8 +282,8 @@ const trans = async (ctx) => {
   if (ctx.ctxmsg.length !== 2) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message:
-        '参数错误。\n“视频源”命令接受两个参数：“项目编号”和“Transerver ID”。'
+      message: `参数错误。
+“视频源”命令接受两个参数：“项目编号”和“Transerver ID”。`
     })
     return
   }
@@ -314,8 +325,8 @@ const tag = async (ctx) => {
   if (ctx.ctxmsg.length !== 2) {
     ctx.bot('send_group_msg', {
       group_id: ctx.group_id,
-      message:
-        '参数错误。\n“标记”命令接受两个参数，分别是“项目编号”和“标记类别”。'
+      message: `参数错误。
+“标记”命令接受两个参数，分别是“项目编号”和“标记类别”。`
     })
     return
   }
@@ -330,8 +341,8 @@ const tag = async (ctx) => {
     default:
       ctx.bot('send_group_msg', {
         group_id: ctx.group_id,
-        message:
-          '参数错误。\n“标记类别”参数接受的值是“进行中”和“已完成”的枚举。'
+        message: `参数错误。
+“标记类别”参数接受的值是“进行中”和“已完成”的枚举。`
       })
       return
   }
