@@ -68,3 +68,4 @@ temp/
 *test*.js*
 *dist*.zip
 *node_modules*
+.vscode/*
