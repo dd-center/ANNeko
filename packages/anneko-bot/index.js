@@ -85,6 +85,9 @@ process.on('uncaughtException', (err) => {
       case '视频源':
         await projFunc.trans(ctx)
         break
+      case '概览':
+        await projFunc.galance(ctx)
+        break
       case '开启提醒':
         await userConfFunc.enableNotify(ctx)
         break

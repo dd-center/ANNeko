@@ -1,4 +1,5 @@
 const toArray = (str) => {
+  if (str === '') return []
   const arr = []
   const data = str.split(',')
   for (const item of data) {

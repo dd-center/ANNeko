@@ -267,10 +267,69 @@ const status = async (ctx) => {
     group_id: ctx.group_id,
     message: `项目${projId}的状态：
 名称：${data[0].name}
-创建时间：${data[0].createTime}
+创建时间：${new Date(Number(data[0].createTime)).toLocaleString('zh-cn', {
+      timeZone: 'Asia/Shanghai'
+    })}
 状态：${stat}
 进度：${data[0].step}
-工作人员：${str}。`
+工作人员：${str === '' ? '尚无' : str}`
+  })
+}
+
+const galance = async (ctx) => {
+  if (ctx.stat < 1) {
+    ban(ctx)
+    return
+  }
+
+  const data = await ctx.db.projdb
+    .find({ stat: 1 })
+    .sort({ createTime: -1 })
+    .limit(5)
+    .toArray()
+  if (data.length < 1) {
+    ctx.bot('send_group_msg', {
+      group_id: ctx.group_id,
+      message: '没有找到对应编号的项目。'
+    })
+    return
+  }
+
+  let optstr = '最近五个项目：\n'
+
+  for (const item of data) {
+    const workerList = worker.toArray(item.worker)
+    let str = ''
+    for (const item of workerList) str += getUserName(Number(item)) + '，'
+    str = str.substring(0, str.length - 1)
+
+    let stat = ''
+    switch (Number(item.stat)) {
+      case 1:
+        stat = '进行中'
+        break
+      case 2:
+        stat = '已完成'
+        break
+
+      default:
+        stat = '其他'
+        break
+    }
+
+    optstr += `项目${item._id}的状态：
+名称：${item.name}
+创建时间：${new Date(Number(item.createTime)).toLocaleString('zh-cn', {
+      timeZone: 'Asia/Shanghai'
+    })}
+状态：${stat}
+进度：${item.step}
+工作人员：${str === '' ? '尚无' : str}\n`
+  }
+
+  ctx.bot('send_group_msg', {
+    group_id: ctx.group_id,
+    message: optstr
   })
 }
 
@@ -375,4 +434,13 @@ const tag = async (ctx) => {
   })
 }
 
-module.exports = { newProj, checkout, jumpIn, jumpOut, tag, status, trans }
+module.exports = {
+  newProj,
+  checkout,
+  jumpIn,
+  jumpOut,
+  tag,
+  status,
+  trans,
+  galance
+}
