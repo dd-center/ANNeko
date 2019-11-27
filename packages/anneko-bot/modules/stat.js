@@ -45,7 +45,7 @@ const member = async (ctx) => {
   for (const d of global.anneko.uList) {
     msg += d.displayName + '：'
     msg += Object.entries(jobTable)
-      .map(([key, name]) => Number(d[key]) === 1 || name)
+      .map(([key, name]) => Number(d[key]) === 1 && name)
       .filter(Boolean)
       .join(' ')
     msg += '\n'
