@@ -277,10 +277,10 @@ const status = async (ctx) => {
 }
 
 const galance = async (ctx) => {
-  if (ctx.stat < 1) {
-    ban(ctx)
-    return
-  }
+  // if (ctx.stat < 1) {
+  //   ban(ctx)
+  //   return
+  // }
 
   const data = await ctx.db.projdb
     .find({ stat: 1 })
