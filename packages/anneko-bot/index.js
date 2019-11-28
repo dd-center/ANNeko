@@ -53,6 +53,17 @@ process.on('uncaughtException', (err) => {
         : 0
     }
     switch (cmd) {
+      case '贴贴':
+      case '贝占贝占':
+      case 'tietie':
+      case 'てえてえ':
+      case 'てぇてぇ': {
+        bot('send_group_msg', {
+          group_id,
+          message: '贴贴！'
+        })
+        break
+      }
       case '自动立项':
         await projFunc.newProj({
           ...ctx,
