@@ -64,6 +64,22 @@ process.on('uncaughtException', (err) => {
         })
         break
       }
+      case '抱抱！':
+      case '抱抱': {
+        bot('send_group_msg', {
+          group_id,
+          message: '抱抱~'
+        })
+        break
+      }
+      case '亲亲！': // 蹬鼻子上脸
+      case '亲亲': {
+        bot('send_group_msg', {
+          group_id,
+          message: 'mua~'
+        })
+        break
+      }
       case '自动立项':
         await projFunc.newProj({
           ...ctx,
