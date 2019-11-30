@@ -9,11 +9,8 @@ const newProj = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 2) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“立项”命令接受两个参数，分别是“项目类别”和“项目名称”。`
-    })
+    ctx.send(`参数错误。
+“立项”命令接受两个参数，分别是“项目类别”和“项目名称”。`)
     return
   }
   let projType = ''
@@ -28,17 +25,11 @@ const newProj = async (ctx) => {
       projType = 'art'
       break
     default:
-      ctx.bot('send_group_msg', {
-        group_id: ctx.group_id,
-        message: `参数错误。
-“项目名称”参数接受的值是“直播”、“剪辑”和“单品”的枚举。`
-      })
+      ctx.send(`参数错误。
+“项目名称”参数接受的值是“直播”、“剪辑”和“单品”的枚举。`)
       return
   }
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: '开始分配新的项目。'
-  })
+  ctx.send('开始分配新的项目。')
   const projId = await getNew(ctx)
   const projName = ctx.ctxmsg[1]
   const projCreateDate = new Date().getTime()
@@ -52,17 +43,14 @@ const newProj = async (ctx) => {
     worker: '',
     transId: ''
   })
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `项目建立成功。
+  ctx.send(`项目建立成功。
 项目编号：${projId}
 项目名称：${projName}
 项目类型：${ctx.ctxmsg[0]}
 创建时间：${new Date(projCreateDate).toLocaleString('zh-cn', {
-      timeZone: 'Asia/Shanghai'
-    })}
-请组长签出工作进度。`
-  })
+    timeZone: 'Asia/Shanghai'
+  })}
+请组长签出工作进度。`)
 }
 
 const checkout = async (ctx) => {
@@ -71,28 +59,19 @@ const checkout = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 2) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“签出”命令接受两个参数，分别是“项目编号”和“签出进度”。`
-    })
+    ctx.send(`参数错误。
+“签出”命令接受两个参数，分别是“项目编号”和“签出进度”。`)
     return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   if (
     (await ctx.db.projdb.find({ _id: Number(projId) }).toArray()).length < 1
   ) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -102,10 +81,7 @@ const checkout = async (ctx) => {
     },
     { $set: { step: ctx.ctxmsg[1] } }
   )
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `项目${projId}已成功签出到进度${ctx.ctxmsg[1]}。`
-  })
+  ctx.send(`项目${projId}已成功签出到进度${ctx.ctxmsg[1]}。`)
 }
 
 const jumpIn = async (ctx) => {
@@ -114,36 +90,24 @@ const jumpIn = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“加入”命令接受一个参数：“项目编号”。`
-    })
+    ctx.send(`参数错误。
+“加入”命令接受一个参数：“项目编号”。`)
     return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   const data = await ctx.db.projdb.find({ _id: Number(projId) }).toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
   const workerList = worker.toArray(data[0].worker || '')
   if (workerList.find((i) => Number(i) === Number(ctx.user_id))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '您已经加入了这个项目。'
-    })
+    ctx.send('您已经加入了这个项目。')
     return
   }
   workerList.push(Number(ctx.user_id))
@@ -154,10 +118,7 @@ const jumpIn = async (ctx) => {
     },
     { $set: { worker: worker.toString(workerList) } }
   )
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `${getUserName(ctx.user_id)}已成功加入项目${projId}。`
-  })
+  ctx.send(`${getUserName(ctx.user_id)}已成功加入项目${projId}。`)
 }
 
 const jumpOut = async (ctx) => {
@@ -166,27 +127,18 @@ const jumpOut = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“退出”命令接受一个参数：“项目编号”。`
-    })
+    ctx.send(`参数错误。
+“退出”命令接受一个参数：“项目编号”。`)
     return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   const data = await ctx.db.projdb.find({ _id: Number(projId) }).toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -195,10 +147,7 @@ const jumpOut = async (ctx) => {
   if (index > -1) {
     workerList.splice(index, 1)
   } else {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '您不在项目中。'
-    })
+    ctx.send('您不在项目中。')
     return
   }
 
@@ -208,10 +157,7 @@ const jumpOut = async (ctx) => {
     },
     { $set: { worker: worker.toString(workerList) } }
   )
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `${getUserName(ctx.user_id)}已成功退出项目${projId}。`
-  })
+  ctx.send(`${getUserName(ctx.user_id)}已成功退出项目${projId}。`)
 }
 
 const status = async (ctx) => {
@@ -220,27 +166,18 @@ const status = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“项目状态”命令接受一个参数：“项目编号”。`
-    })
+    ctx.send(`参数错误。
+“项目状态”命令接受一个参数：“项目编号”。`)
     return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   const data = await ctx.db.projdb.find({ _id: Number(projId) }).toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -263,17 +200,14 @@ const status = async (ctx) => {
       break
   }
 
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `项目${projId}的状态：
+  ctx.send(`项目${projId}的状态：
 名称：${data[0].name}
 创建时间：${new Date(Number(data[0].createTime)).toLocaleString('zh-cn', {
-      timeZone: 'Asia/Shanghai'
-    })}
+    timeZone: 'Asia/Shanghai'
+  })}
 状态：${stat}
 进度：${data[0].step}
-工作人员：${str === '' ? '尚无' : str}`
-  })
+工作人员：${str === '' ? '尚无' : str}`)
 }
 
 const galance = async (ctx) => {
@@ -288,10 +222,7 @@ const galance = async (ctx) => {
     .limit(5)
     .toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -327,10 +258,7 @@ const galance = async (ctx) => {
 工作人员：${str === '' ? '尚无' : str}\n`
   }
 
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: optstr
-  })
+  ctx.send(optstr)
 }
 
 const trans = async (ctx) => {
@@ -339,27 +267,18 @@ const trans = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 2) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“视频源”命令接受两个参数：“项目编号”和“Transerver ID”。`
-    })
+    ctx.send(`参数错误。
+“视频源”命令接受两个参数：“项目编号”和“Transerver ID”。`)
     return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   const data = await ctx.db.projdb.find({ _id: Number(projId) }).toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -370,10 +289,9 @@ const trans = async (ctx) => {
     { $set: { transId: ctx.ctxmsg[1] } }
   )
 
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `项目${projId}的Transerver ID${ctx.ctxmsg[1]}：。请时轴和录入人员下载视频开始工作。`
-  })
+  ctx.send(
+    `项目${projId}的Transerver ID${ctx.ctxmsg[1]}：。请时轴和录入人员下载视频开始工作。`
+  )
 }
 
 const tag = async (ctx) => {
@@ -382,11 +300,8 @@ const tag = async (ctx) => {
     return
   }
   if (ctx.ctxmsg.length !== 2) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: `参数错误。
-“标记”命令接受两个参数，分别是“项目编号”和“标记类别”。`
-    })
+    ctx.send(`参数错误。
+“标记”命令接受两个参数，分别是“项目编号”和“标记类别”。`)
     return
   }
   let stat = -1
@@ -398,27 +313,18 @@ const tag = async (ctx) => {
       stat = 2
       break
     default:
-      ctx.bot('send_group_msg', {
-        group_id: ctx.group_id,
-        message: `参数错误。
-“标记类别”参数接受的值是“进行中”和“已完成”的枚举。`
-      })
+      ctx.send(`参数错误。
+“标记类别”参数接受的值是“进行中”和“已完成”的枚举。`)
       return
   }
   if (isNaN(Number(ctx.ctxmsg[0]))) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '项目编号有误。'
-    })
+    ctx.send('项目编号有误。')
     return
   }
   const projId = Number(ctx.ctxmsg[0])
   const data = await ctx.db.projdb.find({ _id: Number(projId) }).toArray()
   if (data.length < 1) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: '没有找到对应编号的项目。'
-    })
+    ctx.send('没有找到对应编号的项目。')
     return
   }
 
@@ -428,10 +334,7 @@ const tag = async (ctx) => {
     },
     { $set: { stat: Number(stat) } }
   )
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `项目${projId}已被成功标记为${ctx.ctxmsg[1]}。`
-  })
+  ctx.send(`项目${projId}已被成功标记为${ctx.ctxmsg[1]}。`)
 }
 
 module.exports = {

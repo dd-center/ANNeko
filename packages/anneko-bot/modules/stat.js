@@ -37,10 +37,7 @@ const HELP_MESSAGE = `永远喵——任务分配系统v0.1，请勿调戏。
 
 const member = async (ctx) => {
   if (!global.anneko.uList) {
-    ctx.bot('send_group_msg', {
-      group_id: ctx.group_id,
-      message: 'ERR at fetching uList'
-    })
+    ctx.send('ERR at fetching uList')
     return
   }
   let msg = `目前工作组内成员有（进组请先看群公告）：
@@ -53,10 +50,7 @@ const member = async (ctx) => {
       .join(' ')
     msg += '\n'
   }
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: msg
-  })
+  ctx.send(msg)
 }
 
 const status = async (ctx) => {
@@ -65,14 +59,11 @@ const status = async (ctx) => {
     return
   }
   const current = await getCurrent(ctx)
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `欢迎回来。
+  ctx.send(`欢迎回来。
 跟踪对象当前${global.anneko.live ? '正在' : '未'}直播。
 正在进行的项目个数：${current.processingCount}；历史总项目个数：${
-      current.projCount
-    }`
-  })
+    current.projCount
+  }`)
 }
 
 const help = async (ctx) => {
@@ -80,10 +71,7 @@ const help = async (ctx) => {
     ban(ctx)
     return
   }
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: HELP_MESSAGE
-  })
+  ctx.send(HELP_MESSAGE)
 }
 
 const refresh = async (ctx) => {
@@ -91,31 +79,19 @@ const refresh = async (ctx) => {
     ban(ctx)
     return
   }
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: '维护任务开始。'
-  })
+  ctx.send('维护任务开始。')
   await refreshAuth(ctx)
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: '维护完毕。'
-  })
+  ctx.send('维护完毕。')
 }
 
 const ban = (ctx) => {
-  ctx.bot('send_group_msg', {
-    group_id: ctx.group_id,
-    message: `[CQ:at,qq=${ctx.user_id}]您的权限不足。`
-  })
+  ctx.send(`[CQ:at,qq=${ctx.user_id}]您的权限不足。`)
 }
 
 const debug = async (ctx) => {
   switch (ctx.ctxmsg[0]) {
     case 'TESTMSG':
-      ctx.bot('send_group_msg', {
-        group_id: ctx.group_id,
-        message: `[CQ:at,qq=${ctx.user_id}]TESTMSG`
-      })
+      ctx.send(`[CQ:at,qq=${ctx.user_id}]TESTMSG`)
       break
     default:
       break
