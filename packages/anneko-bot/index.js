@@ -34,7 +34,7 @@ process.on('uncaughtException', (err) => {
     console.log('ERR')
     console.log(err)
   })
-  bot.on('message.group', async (event, context, tags) => {
+  bot.on('message.group', async (_event, context) => {
     const contextMessage = context.message
     const group_id = context.group_id
     const user_id = context.user_id
