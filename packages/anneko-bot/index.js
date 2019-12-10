@@ -6,7 +6,7 @@ const statFunc = require('./modules/stat')
 const projFunc = require('./modules/proj')
 const userConfFunc = require('./modules/userConf')
 
-const groups = [951669054, 950620854]
+const groups = [951669054, 729794423]
 const livets = 0
 
 global.anneko = {
