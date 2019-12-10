@@ -67,7 +67,7 @@ process.on('uncaughtException', (err) => {
       case 'tietie':
       case 'てえてえ':
       case 'てぇてぇ':
-        send('贴贴！')
+        send(`[CQ:at,qq=${user_id}]贴贴！`)
         break
       case '抱抱！':
       case '抱抱':
