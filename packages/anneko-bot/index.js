@@ -60,7 +60,7 @@ process.on('uncaughtException', (err) => {
       case 'てぇてぇ': {
         bot('send_group_msg', {
           group_id,
-          message: '贴贴！'
+          message: `[CQ:at,qq=${user_id}]贴贴！`
         })
         break
       }
