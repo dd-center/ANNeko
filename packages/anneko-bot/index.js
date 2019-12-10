@@ -34,7 +34,7 @@ process.on('uncaughtException', (err) => {
     console.log('ERR')
     console.log(err)
   })
-  bot.on('message.group', async (event, context, tags) => {
+  bot.on('message.group', async (_event, context) => {
     const contextMessage = context.message
     const group_id = context.group_id
     const user_id = context.user_id
@@ -42,8 +42,16 @@ process.on('uncaughtException', (err) => {
     const ctxmsg = contextMessage.replace('永远喵，', '').split(' ')
     const cmd = ctxmsg[0]
     ctxmsg.shift()
+
+    const send = (message) =>
+      bot('send_group_msg', {
+        group_id,
+        message
+      })
+
     const ctx = {
       bot,
+      send,
       ctxmsg,
       db,
       group_id,
@@ -52,34 +60,23 @@ process.on('uncaughtException', (err) => {
         ? Number(global.anneko.authdb[Number(user_id)])
         : 0
     }
+
     switch (cmd) {
       case '贴贴':
       case '贝占贝占':
       case 'tietie':
       case 'てえてえ':
-      case 'てぇてぇ': {
-        bot('send_group_msg', {
-          group_id,
-          message: `[CQ:at,qq=${user_id}]贴贴！`
-        })
+      case 'てぇてぇ':
+        send(`[CQ:at,qq=${user_id}]贴贴！`)
         break
-      }
       case '抱抱！':
-      case '抱抱': {
-        bot('send_group_msg', {
-          group_id,
-          message: '抱抱~'
-        })
+      case '抱抱':
+        send('抱抱~')
         break
-      }
       case '亲亲！': // 蹬鼻子上脸
-      case '亲亲': {
-        bot('send_group_msg', {
-          group_id,
-          message: 'mua~'
-        })
+      case '亲亲':
+        send('mua~')
         break
-      }
       case '自动立项':
         await projFunc.newProj({
           ...ctx,
@@ -137,10 +134,7 @@ process.on('uncaughtException', (err) => {
         await statFunc.debug(ctx)
         break
       default:
-        bot('send_group_msg', {
-          group_id,
-          message: '无效指令。'
-        })
+        send('无效指令。')
         break
     }
   })
